@@ -42,6 +42,10 @@ class Version(Base):
     version = Column(String(15), nullable=False)
     date = Column(DateTime, default=datetime.now(), nullable=False)
     commit_hash = Column(String(60), nullable=False)
+    commit_author = Column(String(20), nullable=False)
+    committer_email = Column(String(30), nullable=False)
+    commit_date = Column(DateTime, nullable=False)
+    commit_message = Column(String(30), nullable=False)
     commit_log = Column(Text, nullable=True)
 
     app = relationship('App', back_populates='version')
@@ -65,21 +69,18 @@ class Build(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     date = Column(DateTime, default=datetime.now(), nullable=False)
+    repo = Column(String(60), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
-    repo = Column(String(30), nullable=False)
+    app_id = Column(Integer, ForeignKey('app.id'))
     branch = Column(String(15), nullable=False)
     version = Column(String(15), nullable=False)
-    commit_hash = Column(String(60), nullable=False)
-    commit_author = Column(String(20), nullable=False)
-    committer_email = Column(String(30), nullable=False)
-    commit_date = Column(DateTime, nullable=False)
-    commit_message = Column(String(30), nullable=False)
     md5 = Column(String(32), nullable=False)
     sha1 = Column(String(40), nullable=False)
     sha512 = Column(String(128), nullable=False)
 
+    app = relationship('User', back_populates='build')
     user = relationship('User', back_populates='build')
-    publishment = relationship('Publishment', uselist=False, back_populates='artifact')
+    publishment = relationship('Publishment', back_populates='artifact')
 
 
 class Publishment(Base):

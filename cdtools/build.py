@@ -20,11 +20,11 @@ class Artifact(object):
         head_hash = self.repo.head.object.hexsha
         return head_hash
 
-    def change_log(self, previous_hash=None):
-        if previous_hash is None:
-            previous_hash = list(self.repo.iter_commits())[1]
+    def change_log(self, previous_commit_hash=None):
+        if previous_commit_hash is None:
+            previous_commit_hash = list(self.repo.iter_commits())[1]
 
-        changes = self.repo.git.diff(previous_hash, self.get_head())
+        changes = self.repo.git.diff(previous_commit_hash, self.get_head())
         assert isinstance(changes, str)
         return changes
 
@@ -46,10 +46,10 @@ class Artifact(object):
     def committer(self):
         author = self.repo.head.reference.commit.author.name
         email = self.repo.head.reference.commit.author.email
-        message = self.repo.head.reference.commit.message
         date = datetime.fromtimestamp(
             self.repo.head.reference.commit.committed_date)
-        commit_info = [author, email, message, date]
+        message = self.repo.head.reference.commit.message
+        commit_info = [author, email, date, message]
         return commit_info
 
 
@@ -68,9 +68,8 @@ class BuildWithGradle(Artifact):
         if value > 0:
             raise SystemError('[Error]: Compile Failed')
 
-    def pack(self, dist):
+    def pack(self, dist, version):
         app = self.meta['app']
-        version = self.meta['version']
         folder = self.meta['archive_folder']
         date = datetime.today().strftime("%Y%m%d")
         jar_name = f'{app}-{version}.jar'
@@ -87,7 +86,7 @@ class BuildWithGradle(Artifact):
         return tar_ball
 
 
-class BuildWithNpm(Artifact):
+class NpmBuild(Artifact):
     def __init__(self, path, **meta):
         super().__init__(path)
         self.meta = meta
@@ -105,9 +104,8 @@ class BuildWithNpm(Artifact):
         if value > 0:
             raise SystemError('[Error]: Compile Failed')
 
-    def pack(self, dist):
+    def pack(self, dist, version):
         web = self.meta['web']
-        version = self.meta['version']
         folder = self.meta['build_folder']
         date = datetime.today().strftime("%Y%m%d")
         tar_ball = f'{dist}/{web}-{version}-{date}.tgz'
@@ -119,4 +117,4 @@ class BuildWithNpm(Artifact):
         return tar_ball
 
 
-__all__ = (Artifact, GradleBuild, NpmBuild)
+__all__ = (Artifact, BuildWithGradle, NpmBuild)
