@@ -39,7 +39,7 @@ class Version(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     app_id = Column(Integer, ForeignKey('app.id'))
-    version = Column(String(15), nullable=False)
+    version = Column(String(15), unique=True, nullable=False)
     date = Column(DateTime, default=datetime.now(), nullable=False)
     commit_hash = Column(String(60), nullable=False)
     commit_author = Column(String(20), nullable=False)
@@ -100,7 +100,7 @@ class Publishment(Base):
 
     artifact_id = Column(Integer, ForeignKey('build.id'))
     artifact = relationship('Build', back_populates='publishment')
-    statue = Column(String(10), nullable=True)
+    result = Column(String(10), nullable=True)
 
 
 
