@@ -1,0 +1,57 @@
+---
+service:
+  name: foo
+  type: java
+  version: 0.0.1
+
+file:
+  owner: bar
+  group: bar
+  mode: 2740
+  name: foo-0.0.1-date.jar
+  work_dir: /home/foo
+  backup:
+    path: /home/foo/backup
+    compress: zip
+    quntity: 3
+
+write_enable:
+  - /home/foo
+  - /var/run/foo
+  - /var/log/foo
+
+run:
+  user: bar
+  group: bar
+  # if environment variable is None, you can set the {environment.get} or {environment.set} value to []
+  environment:
+    get:
+      - JAVA_HOME
+    set:
+      - NAME=Vaule
+  command:
+    # each command option must be a list and split the [command] by space, because subprocess.Popen([command], shell=False)
+    default:
+      - /usr/local/jdk/bin/java
+      - -jar
+      - /home/jar/foo-0.0.1-date.jar
+    debug:
+      - /usr/local/jdk/bin/java
+      - -Xms512m
+      - -Xmx512m
+      - -Xmn128n
+      - -jar
+      - /home/jar/foo-0.0.1-date.jar
+      - --spring.active.config=debug
+  log:
+    - /var/log/foo/foo.log
+    - /var/log/foo/error.log
+  pid: /var/run/foo/foo.pid
+
+net:
+  bind: 127.0.0.1
+  tcp:
+    - 8080
+  udp: []
+  socket:
+    - /tmp/foo.socket

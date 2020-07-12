@@ -2,8 +2,8 @@
 
 import os
 from hash import checksum
-from publish import (JavaArchive,
-                     WebPackage)
+from cd.publish import (JavaArchive,
+                        WebPackage)
 
 
 class RollBack(JavaArchive, WebPackage):

@@ -1,0 +1,22 @@
+---
+service:
+  name: auth
+  type: java
+  version: 0.0.1
+  project: 1+X
+  hosts:
+    - 10.0.63.207
+    - 10.0.63.209
+
+repo:
+  path: /repo/tta/edu/auth
+  branch: master
+  reset: false
+
+build:
+  command:
+    - /usr/local/gradle/bin/gradle clean
+    - /usr/local/gradle/bin/gradle build
+  archive:
+    dir: /repo/tta/edu/auth/build/libs
+    type: jar
